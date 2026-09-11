@@ -199,7 +199,7 @@ export default function UploadsPage() {
             <Button variant="ghost" onClick={() => { setStage('idle'); setRows([]) }}>
               UPLOAD ANOTHER
             </Button>
-            <Link href="/uploads/history">
+            <Link href="/dashboard">
               <Button variant="primary">VIEW MY UPLOADS →</Button>
             </Link>
           </div>

@@ -1,7 +1,7 @@
 import React from 'react'
 
 /* ─── Button ─────────────────────────────────────────────── */
-type BtnVariant = 'primary' | 'secondary' | 'danger'
+type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: BtnVariant
   loading?: boolean
@@ -10,9 +10,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({ variant = 'primary', loading, children, className = '', ...props }: ButtonProps) {
   let baseClass = 'btn-primary'
   if (variant === 'secondary') baseClass = 'btn-secondary'
+  if (variant === 'ghost') baseClass = 'btn-secondary'
   if (variant === 'danger') {
-    baseClass = 'btn-primary' // We can just override colors via style or custom class if needed
-    className += ' bg-[#C43B45] text-white hover:bg-[#C43B45]'
+    baseClass = 'btn-primary'
+    className += ' !bg-[#C43B45] !text-white hover:!bg-[#C43B45]'
   }
 
   return (

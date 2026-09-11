@@ -17,12 +17,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   let role = profile?.role
 
-  if (!role && user.email) {
-    if (user.email === 'superadmin@higenlabs.in' || user.email.endsWith('@higenlabs.in')) {
-      role = 'super_admin'
-    } else {
-      role = 'ambassador'
-    }
+  if (user.email === 'superadmin@higenlabs.in' || user.email?.endsWith('@higenlabs.in')) {
+    role = 'super_admin'
   } else if (!role) {
     role = 'ambassador'
   }

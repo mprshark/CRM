@@ -39,11 +39,8 @@ export async function loginAction(_prev: unknown, formData: FormData) {
 
   let role: Role = profile?.role ?? 'ambassador'
 
-  // Fallback: if profile doesn't exist yet, infer role from email domain
-  if (!profile) {
-    if (email === 'superadmin@higenlabs.in' || email.endsWith('@higenlabs.in')) {
-      role = 'super_admin'
-    }
+  if (email === 'superadmin@higenlabs.in' || email.endsWith('@higenlabs.in')) {
+    role = 'super_admin'
   }
 
   redirectAfterLogin(role)
@@ -70,7 +67,11 @@ export async function adminLoginAction(_prev: unknown, formData: FormData) {
     .eq('id', user.id)
     .single()
 
-  const role: Role = profile?.role ?? 'ambassador'
+  let role: Role = profile?.role ?? 'ambassador'
+  if (email === 'superadmin@higenlabs.in' || email.endsWith('@higenlabs.in')) {
+    role = 'super_admin'
+  }
+
   if (role !== 'admin' && role !== 'super_admin') {
     // sign them back out — wrong portal
     await supabase.auth.signOut()
