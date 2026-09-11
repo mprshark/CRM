@@ -1,15 +1,14 @@
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
 import { StatCard, PageHeader, Badge } from '@/components/ui'
 import Link from 'next/link'
+import { getEffectiveRole } from '@/utils/getEffectiveRole'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 
 export default async function AdminDashboard() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const result = await getEffectiveRole()
+  if (!result || !['admin', 'super_admin'].includes(result.role)) redirect('/login')
 
-  const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (!['admin', 'super_admin'].includes(profile?.role)) redirect('/login')
+  const supabase = await createClient()
 
   const [campusesRes, usersRes, uploadsRes] = await Promise.all([
     supabase.from('campuses').select('id, name, city', { count: 'exact' }),

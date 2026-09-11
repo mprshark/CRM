@@ -1,29 +1,27 @@
-import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { TopNav } from '@/components/TopNav'
+import { getEffectiveRole } from '@/utils/getEffectiveRole'
+import { createClient } from '@/utils/supabase/server'
 import React from 'react'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) redirect('/login')
 
+  const result = await getEffectiveRole()
+  if (!result) redirect('/login')
+
+  const { role } = result
+
+  // Get display info
   const { data: profile } = await supabase
     .from('users')
-    .select('name, role, campus_id, campuses(name)')
+    .select('name, campus_id, campuses(name)')
     .eq('id', user.id)
     .single()
 
-  let role = profile?.role
-
-  if (user.email === 'superadmin@higenlabs.in' || user.email?.endsWith('@higenlabs.in')) {
-    role = 'super_admin'
-  } else if (!role) {
-    role = 'ambassador'
-  }
-
-  const name   = profile?.name   ?? user.email ?? 'User'
+  const name   = profile?.name ?? user.email ?? 'User'
   const campus = (profile?.campuses as { name?: string } | null)?.name
 
   return (

@@ -92,8 +92,8 @@ export default function LoginPage() {
             <form action={formAction} className="form-body">
               <div className="field">
                 <label htmlFor="email" className="field-label">EMAIL</label>
-                <input id="email" name="email" type="email" placeholder="ambassador@campus.edu"
-                  defaultValue="ambassador@campus.edu" required autoComplete="email" className="field-input" />
+                <input id="email" name="email" type="email" placeholder="you@campus.edu"
+                  required autoComplete="email" className="field-input" />
               </div>
               <div className="field">
                 <div className="field-header">
@@ -101,7 +101,7 @@ export default function LoginPage() {
                   <Link href="/login/forgot" className="forgot-link">FORGOT?</Link>
                 </div>
                 <input id="password" name="password" type="password" placeholder="••••••••"
-                  defaultValue="password123" required autoComplete="current-password" className="field-input" />
+                  required autoComplete="current-password" className="field-input" />
               </div>
               <div className="checkbox-row">
                 <div className="checkbox-box">
