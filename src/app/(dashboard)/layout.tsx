@@ -30,10 +30,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
       {/* Main dashboard content container */}
       <main className="flex-1 p-6 md:p-10 max-w-[1400px] w-full mx-auto" style={{ minHeight: 0 }}>
-        <div className="bg-white border-3 border-[#0F1720] p-6 md:p-10 shadow-[8px_8px_0_#0F1720] relative min-h-[80vh]">
-          <div className="card-corner-tag">/ WORKSPACE</div>
-          {children}
-        </div>
+        {children}
       </main>
 
       {/* Footer */}

@@ -48,7 +48,7 @@ export default async function AmbassadorDashboard() {
             description="Head to My Uploads to upload your first outreach sheet."
           />
         ) : (
-          <div className="form-card p-0 overflow-hidden">
+          <div className="border-2 border-[#0F1720] bg-white overflow-hidden shadow-[4px_4px_0_#0F1720]">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>

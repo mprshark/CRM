@@ -90,12 +90,23 @@ interface StatCardProps { label: string; value: string | number; delta?: string;
 
 export function StatCard({ label, value, delta, accent }: StatCardProps) {
   return (
-    <div className={`border-[3px] border-[#0F1720] shadow-[8px_8px_0_#0F1720] relative flex flex-col justify-center ${accent ? 'bg-[#CCFF00]' : 'bg-[#0F1720] text-white'}`} style={{ padding: '24px 28px', minWidth: 120 }}>
-      <p className={`text-[9px] tracking-[3px] uppercase opacity-60 mb-2 ${accent ? 'text-[#0F1720]' : 'text-white'}`} style={{ fontFamily: 'var(--font-anton), Anton, sans-serif' }}>{label}</p>
-      <p className={`text-4xl sm:text-5xl leading-none tracking-[-0.5px] ${accent ? 'text-[#0F1720]' : 'text-[#CCFF00]'}`} style={{ fontFamily: 'var(--font-anton), Anton, sans-serif' }}>
+    <div 
+      className={`border-2 border-[#0F1720] shadow-[4px_4px_0_#0F1720] relative flex flex-col justify-center ${
+        accent ? 'bg-[#CCFF00] text-[#0F1720]' : 'bg-white text-[#0F1720]'
+      }`} 
+      style={{ padding: '20px 24px', minWidth: 120 }}
+    >
+      <p className="text-[10px] tracking-[3px] uppercase opacity-70 mb-2 font-[Anton]" style={{ fontFamily: 'var(--font-anton), Anton, sans-serif' }}>
+        {label}
+      </p>
+      <p className="text-4xl sm:text-5xl leading-none tracking-[-0.5px] font-[Anton]" style={{ fontFamily: 'var(--font-anton), Anton, sans-serif' }}>
         {value}
       </p>
-      {delta && <p className="text-[11px] tracking-[2px] opacity-80 mt-2 uppercase font-[Anton]" style={{ fontFamily: 'var(--font-anton)' }}>{delta}</p>}
+      {delta && (
+        <p className="text-[11px] tracking-[2px] opacity-80 mt-2 uppercase font-[Anton]" style={{ fontFamily: 'var(--font-anton)' }}>
+          {delta}
+        </p>
+      )}
     </div>
   )
 }
