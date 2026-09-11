@@ -1,3 +1,4 @@
+import { getEffectiveRole } from '@/utils/getEffectiveRole'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { PageHeader, Button, EmptyState } from '@/components/ui'
@@ -5,11 +6,9 @@ import Link from 'next/link'
 
 export default async function CampusesPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
 
-  const { data: me } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (!['admin', 'super_admin'].includes(me?.role)) redirect('/login')
+  const result = await getEffectiveRole()
+  if (!result || !['admin', 'super_admin'].includes(result.role)) redirect('/login')
 
   const { data: campuses } = await supabase
     .from('campuses')

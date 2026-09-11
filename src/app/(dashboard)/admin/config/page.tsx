@@ -1,17 +1,15 @@
+import { getEffectiveRole } from '@/utils/getEffectiveRole'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { PageHeader, Button, Input } from '@/components/ui'
 
 export default async function ConfigPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const { data: me } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (me?.role !== 'super_admin') {
-    // Only super admin can access scoring config
+  const result = await getEffectiveRole()
+  if (!result || result.role !== 'super_admin') {
     redirect('/admin/dashboard')
   }
+
+  const supabase = await createClient()
 
   // Fetch current scoring config (mocking config from db for now as we hardcoded it in actions)
   // In a real app, we'd fetch this from a `scoring_config` table

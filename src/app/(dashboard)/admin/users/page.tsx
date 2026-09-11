@@ -1,3 +1,4 @@
+import { getEffectiveRole } from '@/utils/getEffectiveRole'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { PageHeader, Badge, Button, EmptyState } from '@/components/ui'
@@ -10,11 +11,9 @@ export default async function UsersPage({
 }) {
   const { q = '', role = '' } = await searchParams
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
 
-  const { data: me } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (!['admin', 'super_admin'].includes(me?.role)) redirect('/login')
+  const result = await getEffectiveRole()
+  if (!result || !['admin', 'super_admin'].includes(result.role)) redirect('/login')
 
   let query = supabase
     .from('users')

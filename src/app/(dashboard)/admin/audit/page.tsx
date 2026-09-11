@@ -1,3 +1,4 @@
+import { getEffectiveRole } from '@/utils/getEffectiveRole'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { PageHeader, EmptyState, Badge } from '@/components/ui'
@@ -9,12 +10,10 @@ export default async function AuditLogPage({
 }) {
   const { entity = '' } = await searchParams
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const result = await getEffectiveRole()
+  if (!result || result.role !== 'super_admin') redirect('/admin/dashboard')
 
-  const { data: me } = await supabase.from('users').select('role').eq('id', user.id).single()
-  if (me?.role !== 'super_admin') redirect('/admin/dashboard')
+  const supabase = await createClient()
 
   let query = supabase
     .from('audit_log')
