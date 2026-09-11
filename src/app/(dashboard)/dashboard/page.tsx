@@ -37,8 +37,8 @@ export default async function AmbassadorDashboard() {
       </div>
 
       {/* Recent uploads */}
-      <div className="mb-8">
-        <h2 className="text-lg tracking-widest text-[#0F1720] mb-4 border-b-2 border-[#0F1720] pb-2">
+      <div className="mb-12">
+        <h2 className="text-2xl tracking-[2px] text-[#0F1720] mb-6 border-b-[3px] border-[#0F1720] pb-2 uppercase" style={{ fontFamily: 'var(--font-anton), Anton, sans-serif' }}>
           RECENT UPLOADS
         </h2>
 
@@ -48,29 +48,31 @@ export default async function AmbassadorDashboard() {
             description="Head to My Uploads to upload your first outreach sheet."
           />
         ) : (
-          <div className="border-2 border-[#0F1720] bg-white overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b-2 border-[#0F1720] bg-[#F5F0E8]">
-                  <th className="text-left px-4 py-3 tracking-widest text-xs">#</th>
-                  <th className="text-left px-4 py-3 tracking-widest text-xs">UPLOAD ID</th>
-                  <th className="text-left px-4 py-3 tracking-widest text-xs">STATUS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentUploads.map((u, i) => (
-                  <tr key={u.id} className="border-b border-[#0F1720]/10 hover:bg-[#F5F0E8]/50 transition-colors">
-                    <td className="px-4 py-3 font-mono text-[#0F1720]/40">{i + 1}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{u.id.slice(0, 8)}…</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={u.status === 'verified' ? 'ok' : u.status === 'rejected' ? 'danger' : 'warn'}>
-                        {u.status.toUpperCase()}
-                      </Badge>
-                    </td>
+          <div className="form-card p-0 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b-[3px] border-[#0F1720] bg-[#CCFF00]">
+                    <th className="px-6 py-4 text-[11px] tracking-[3px] font-[Anton] uppercase text-[#0F1720]" style={{ fontFamily: 'var(--font-anton)' }}>#</th>
+                    <th className="px-6 py-4 text-[11px] tracking-[3px] font-[Anton] uppercase text-[#0F1720]" style={{ fontFamily: 'var(--font-anton)' }}>UPLOAD ID</th>
+                    <th className="px-6 py-4 text-[11px] tracking-[3px] font-[Anton] uppercase text-[#0F1720]" style={{ fontFamily: 'var(--font-anton)' }}>STATUS</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white">
+                  {recentUploads.map((u, i) => (
+                    <tr key={u.id} className="border-b-2 border-[#0F1720] last:border-0 hover:bg-[#F5F0E8] transition-colors">
+                      <td className="px-6 py-5 font-mono text-[#0F1720]/40 text-xs">{i + 1}</td>
+                      <td className="px-6 py-5 font-mono text-sm tracking-tight">{u.id.slice(0, 8)}…</td>
+                      <td className="px-6 py-5">
+                        <Badge variant={u.status === 'verified' ? 'ok' : u.status === 'rejected' ? 'danger' : 'warn'}>
+                          {u.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

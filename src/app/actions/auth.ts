@@ -24,20 +24,28 @@ export async function loginAction(_prev: unknown, formData: FormData) {
   }
 
   const supabase = await createClient()
-
   const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
   if (authError) return { error: authError.message }
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Something went wrong. Try again.' }
 
+  // Try to get role from public.users
   const { data: profile } = await supabase
     .from('users')
     .select('role')
     .eq('id', user.id)
     .single()
 
-  const role: Role = profile?.role ?? 'ambassador'
+  let role: Role = profile?.role ?? 'ambassador'
+
+  // Fallback: if profile doesn't exist yet, infer role from email domain
+  if (!profile) {
+    if (email === 'superadmin@higenlabs.in' || email.endsWith('@higenlabs.in')) {
+      role = 'super_admin'
+    }
+  }
+
   redirectAfterLogin(role)
 }
 
