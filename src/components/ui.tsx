@@ -105,24 +105,18 @@ interface PageHeaderProps { title: string; subtitle?: string; action?: React.Rea
 
 export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-      <div className="flex flex-col">
-        <div className="inline-flex items-center gap-2 border-2 border-[#0F1720] bg-white px-3 py-1 mb-4 shadow-[2px_2px_0_#0F1720] w-max">
-          <div className="w-2 h-2 bg-[#CCFF00] border border-[#0F1720]" />
-          <span className="text-[9px] tracking-[3px] font-[Anton] uppercase text-[#0F1720]" style={{ fontFamily: 'var(--font-anton)' }}>WORKSPACE</span>
-        </div>
-        <h1 className="text-4xl sm:text-[56px] text-[#0F1720] leading-none tracking-[-1px] uppercase mb-4" style={{ fontFamily: 'var(--font-anton), Anton, sans-serif' }}>
+    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 border-b-2 border-[#0F1720] pb-6">
+      <div>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl text-[#0F1720] leading-none tracking-[-0.5px] uppercase mb-2" style={{ fontFamily: 'var(--font-anton), Anton, sans-serif' }}>
           {title}
         </h1>
         {subtitle && (
-          <div className="border-[3px] border-[#0F1720] bg-white px-5 py-4 max-w-[500px] shadow-[4px_4px_0_#0F1720]">
-            <p className="text-[15px] text-[#0F1720] leading-snug" style={{ fontFamily: 'system-ui, sans-serif', letterSpacing: 0 }}>
-              {subtitle}
-            </p>
-          </div>
+          <p className="text-sm text-[#0F1720]/70 font-sans" style={{ fontFamily: 'system-ui, sans-serif' }}>
+            {subtitle}
+          </p>
         )}
       </div>
-      {action && <div className="flex-shrink-0 mt-4 md:mt-0">{action}</div>}
+      {action && <div className="flex-shrink-0 mt-2 md:mt-0">{action}</div>}
     </div>
   )
 }
