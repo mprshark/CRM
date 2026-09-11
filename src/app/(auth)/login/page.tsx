@@ -1,8 +1,7 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import { loginAction } from '@/app/actions/auth'
-import Link from 'next/link'
 
 const initialState = { error: '' }
 
@@ -14,6 +13,7 @@ const TICKERS = [
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState(loginAction, initialState)
+  const [showPassword, setShowPassword] = useState(false)
 
   return (
     <div className="login-root">
@@ -91,36 +91,64 @@ export default function LoginPage() {
             <p className="card-sub">Welcome back. Punch in to keep building.</p>
             <form action={formAction} className="form-body">
               <div className="field">
-                <label htmlFor="email" className="field-label">EMAIL</label>
-                <input id="email" name="email" type="email" placeholder="you@campus.edu"
-                  required autoComplete="email" className="field-input" />
+                <label htmlFor="username" className="field-label">USERNAME OR EMAIL</label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="Enter your username or email"
+                  required
+                  autoComplete="username"
+                  className="field-input"
+                />
               </div>
               <div className="field">
-                <div className="field-header">
-                  <label htmlFor="password" className="field-label">PASSWORD</label>
-                  <Link href="/login/forgot" className="forgot-link">FORGOT?</Link>
+                <label htmlFor="password" className="field-label">PASSWORD</label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    required
+                    autoComplete="current-password"
+                    className="field-input"
+                    style={{ paddingRight: 52 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(v => !v)}
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: 48,
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#0F1720',
+                      opacity: 0.5,
+                      fontSize: 18,
+                    }}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? '🙈' : '👁'}
+                  </button>
                 </div>
-                <input id="password" name="password" type="password" placeholder="••••••••"
-                  required autoComplete="current-password" className="field-input" />
               </div>
-              <div className="checkbox-row">
-                <div className="checkbox-box">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0F1720" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </div>
-                <span className="checkbox-label">Keep me signed in</span>
-              </div>
+
               {state?.error && <div className="form-error">{state.error}</div>}
+
               <button type="submit" disabled={pending} className="btn-primary">
                 {pending ? 'SIGNING IN...' : 'SIGN IN →'}
               </button>
-              <p className="form-footer">
-                No account yet? <Link href="#" className="create-link">Create one</Link>
-              </p>
             </form>
           </div>
-          <div className="below-card">
-            {/* Admin link removed as requested */}
-          </div>
+          <div className="below-card"></div>
         </div>
       </main>
 
@@ -181,31 +209,7 @@ export default function LoginPage() {
           letter-spacing: 2px;
         }
         .navbar-links { display: flex; gap: 24px; }
-        .nav-item {
-          font-family: Anton, system-ui, sans-serif;
-          font-size: 11px;
-          letter-spacing: 2px;
-          cursor: pointer;
-        }
         .navbar-right { display: flex; align-items: center; gap: 12px; }
-        .navbar-sub-link {
-          font-family: Anton, system-ui, sans-serif;
-          font-size: 11px;
-          letter-spacing: 2px;
-          text-decoration: none;
-          color: #0F1720;
-        }
-        .navbar-cta {
-          background: #0F1720;
-          color: #fff;
-          padding: 8px 14px;
-          font-family: Anton, system-ui, sans-serif;
-          font-size: 11px;
-          letter-spacing: 2px;
-          border: 2px solid #0F1720;
-          cursor: pointer;
-          white-space: nowrap;
-        }
 
         /* ── Ticker ── */
         .ticker-bar {
@@ -233,7 +237,7 @@ export default function LoginPage() {
         .ticker-ink { color: #0F1720; }
         @keyframes ticker {
           from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
+          to   { transform: translateX(-50%); }
         }
 
         /* ── Main body ── */
@@ -313,26 +317,6 @@ export default function LoginPage() {
           cursor: pointer;
         }
         .feature-icon { font-size: 14px; }
-        .stats-row { display: flex; gap: 10px; flex-wrap: wrap; }
-        .stat-box {
-          background: #0F1720;
-          color: #fff;
-          padding: 12px 18px;
-          min-width: 90px;
-        }
-        .stat-val {
-          font-family: Anton, system-ui, sans-serif;
-          font-size: 20px;
-          color: #CCFF00;
-          letter-spacing: -0.5px;
-        }
-        .stat-label {
-          font-family: Anton, system-ui, sans-serif;
-          font-size: 8px;
-          letter-spacing: 2px;
-          opacity: 0.6;
-          margin-top: 4px;
-        }
 
         /* ── Form col ── */
         .form-col {
@@ -382,20 +366,11 @@ export default function LoginPage() {
         }
         .form-body { display: flex; flex-direction: column; gap: 16px; }
         .field { display: flex; flex-direction: column; gap: 6px; }
-        .field-header { display: flex; justify-content: space-between; align-items: center; }
         .field-label {
           font-family: Anton, system-ui, sans-serif;
           font-size: 10px;
           letter-spacing: 3px;
           color: #0F1720;
-        }
-        .forgot-link {
-          font-family: Anton, system-ui, sans-serif;
-          font-size: 9px;
-          letter-spacing: 2px;
-          color: #0F1720;
-          opacity: 0.5;
-          text-decoration: underline;
         }
         .field-input {
           width: 100%;
@@ -415,18 +390,6 @@ export default function LoginPage() {
           background: #fff;
           box-shadow: 4px 4px 0 #0F1720;
         }
-        .checkbox-row { display: flex; align-items: center; gap: 10px; }
-        .checkbox-box {
-          width: 20px;
-          height: 20px;
-          background: #CCFF00;
-          border: 2px solid #0F1720;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-        }
-        .checkbox-label { font-size: 14px; color: #0F1720; }
         .form-error {
           border: 2px solid #C43B45;
           background: rgba(196,59,69,0.1);
@@ -448,39 +411,13 @@ export default function LoginPage() {
           box-shadow: 4px 4px 0 #0F1720;
           transition: transform 0.1s, box-shadow 0.1s;
           min-height: 52px;
+          text-transform: uppercase;
         }
         .btn-primary:hover:not(:disabled) {
           transform: translate(2px, 2px);
           box-shadow: 2px 2px 0 #0F1720;
         }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        .or-row { display: flex; align-items: center; gap: 12px; }
-        .or-line { flex: 1; height: 2px; background: #0F1720; }
-        .or-text {
-          font-family: Anton, system-ui, sans-serif;
-          font-size: 9px;
-          letter-spacing: 2px;
-          opacity: 0.4;
-        }
-        .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn-social {
-          padding: 14px;
-          border: 2px solid #0F1720;
-          background: #fff;
-          font-family: Anton, system-ui, sans-serif;
-          font-size: 11px;
-          letter-spacing: 2px;
-          cursor: pointer;
-          box-shadow: 3px 3px 0 #0F1720;
-          transition: transform 0.1s, box-shadow 0.1s;
-          min-height: 48px;
-        }
-        .btn-social:hover {
-          transform: translate(2px, 2px);
-          box-shadow: 1px 1px 0 #0F1720;
-        }
-        .form-footer { text-align: center; font-size: 14px; color: rgba(15,23,32,0.6); }
-        .create-link { font-weight: 700; text-decoration: underline; color: #0F1720; }
         .below-card {
           margin-top: 16px;
           font-family: Anton, system-ui, sans-serif;
@@ -491,7 +428,6 @@ export default function LoginPage() {
           max-width: 420px;
           text-align: center;
         }
-        .below-link { color: #0F1720; text-decoration: underline; }
 
         /* ── Mobile hero section ── */
         .mobile-hero {
@@ -524,7 +460,6 @@ export default function LoginPage() {
           color: rgba(255,255,255,0.6);
           line-height: 1.5;
         }
-        .hl-yellow { background: #CCFF00; color: #0F1720; padding: 0 4px; }
 
         /* ── Mobile feature pills ── */
         .mobile-features {
@@ -576,18 +511,16 @@ export default function LoginPage() {
           }
           .form-card { padding: 28px 20px; max-width: 100%; box-shadow: 5px 5px 0 #0F1720; }
           .card-title { font-size: 28px; }
-          .field-input { font-size: 16px; } /* prevent iOS zoom */
+          .field-input { font-size: 16px; }
           .btn-primary { font-size: 14px; padding: 18px; }
           .below-card { max-width: 100%; }
           .navbar { padding: 0 14px; }
-          .navbar-cta { padding: 7px 12px; font-size: 10px; }
         }
 
         /* ── Small phones ── */
         @media (max-width: 380px) {
           .mobile-headline { font-size: 42px; }
           .form-card { padding: 24px 16px; }
-          .social-row { grid-template-columns: 1fr; }
         }
       `}</style>
     </div>

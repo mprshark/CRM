@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
 
 type Role = 'ambassador' | 'manager' | 'admin' | 'super_admin'
@@ -15,22 +16,52 @@ function redirectAfterLogin(role: Role) {
   }
 }
 
-export async function loginAction(_prev: unknown, formData: FormData) {
-  const email    = formData.get('email')    as string
-  const password = formData.get('password') as string
+/**
+ * Resolves the login identifier (email or username) to an email address.
+ * If the input contains '@' it's treated as an email directly.
+ * Otherwise, we look up by name in the users table.
+ */
+async function resolveEmail(identifier: string): Promise<string | null> {
+  // Looks like an email — use it directly
+  if (identifier.includes('@')) return identifier.toLowerCase().trim()
 
-  if (!email || !password) {
-    return { error: 'Email and password are required.' }
+  // Username lookup via service role (bypasses RLS, needed pre-auth)
+  const adminClient = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
+
+  const { data } = await adminClient
+    .from('users')
+    .select('email')
+    .ilike('name', identifier.trim())
+    .limit(1)
+    .single()
+
+  return data?.email ?? null
+}
+
+export async function loginAction(_prev: unknown, formData: FormData) {
+  const identifier = (formData.get('username') as string)?.trim()
+  const password   = (formData.get('password') as string)
+
+  if (!identifier || !password) {
+    return { error: 'Username/email and password are required.' }
+  }
+
+  const email = await resolveEmail(identifier)
+  if (!email) {
+    return { error: 'No account found with that username.' }
   }
 
   const supabase = await createClient()
   const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
-  if (authError) return { error: authError.message }
+  if (authError) return { error: 'Invalid credentials. Check your username and password.' }
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Something went wrong. Try again.' }
 
-  // Try to get role from public.users
   const { data: profile } = await supabase
     .from('users')
     .select('role')
@@ -47,16 +78,21 @@ export async function loginAction(_prev: unknown, formData: FormData) {
 }
 
 export async function adminLoginAction(_prev: unknown, formData: FormData) {
-  const email    = formData.get('email')    as string
-  const password = formData.get('password') as string
+  const identifier = (formData.get('username') as string)?.trim()
+  const password   = (formData.get('password') as string)
 
-  if (!email || !password) {
-    return { error: 'Email and password are required.' }
+  if (!identifier || !password) {
+    return { error: 'Username/email and password are required.' }
+  }
+
+  const email = await resolveEmail(identifier)
+  if (!email) {
+    return { error: 'No account found with that username.' }
   }
 
   const supabase = await createClient()
   const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
-  if (authError) return { error: authError.message }
+  if (authError) return { error: 'Invalid credentials.' }
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Something went wrong. Try again.' }
@@ -73,9 +109,8 @@ export async function adminLoginAction(_prev: unknown, formData: FormData) {
   }
 
   if (role !== 'admin' && role !== 'super_admin') {
-    // sign them back out — wrong portal
     await supabase.auth.signOut()
-    return { error: 'This portal is for admins only. Use /login instead.' }
+    return { error: 'This portal is for admins only.' }
   }
 
   redirectAfterLogin(role)
